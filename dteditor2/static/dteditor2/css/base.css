@@ -1,0 +1,32 @@
+
+html, body {
+    height: 100%;
+}
+
+.scroll {
+    overflow: scroll;
+}
+
+nav {
+    height: 5%;
+}
+
+#main-wrapper {
+    height: 60%;
+}
+
+#output-wrapper {
+    height: 35%;
+}
+
+#output {
+    height: 90%;
+}
+
+#cmd {
+    height: 10%;
+}
+
+.btn-link:hover {
+    cursor: pointer;
+}

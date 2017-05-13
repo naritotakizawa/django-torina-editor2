@@ -1,0 +1,165 @@
+{% extends "dteditor2/base.html" %}
+{% block title %}
+  {{ editor.file_name }} - {{ editor.opening_file }}
+{% endblock %}
+
+{% block content %}
+
+
+<nav class="navbar navbar-inverse bg-inverse py-1">
+    <a class="navbar-brand" href="#">django-torina-editor2</a>
+</nav>
+
+<!-- ファイル選択とコード入力欄 -->
+<div class="row" id="main-wrapper">
+    
+    <!-- ファイル選択エリア -->
+    <div class="col-2 pt-1 scroll h-100">
+        <div class="container-fluid">
+            <p>Directory</p>
+            {% for dir in editor.tree.dirs %}
+                <a href="{% url 'dteditor2:home' %}?opening_file={{ editor.opening_file }}&current_dir={{ dir.1 }}">
+                    {{ dir.0 }}
+                </a>
+            <hr>
+            {% endfor %}
+    
+            <p>File</p>
+            {% for file in editor.tree.files %}
+                <a href="{% url 'dteditor2:home' %}?opening_file={{ file.1 }}&current_dir={{ editor.current_dir }}">
+                    {{ file.0 }}
+                </a>
+            <hr>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- コード入力エリア -->
+    <div class="col-7 pt-1">
+        <div id="code" class="h-100"></div>
+    </div>
+
+    <!-- 設定等エリア -->
+    <div class="col-3 pt-1 scroll">
+        <ul class="nav nav-tabs" id="tab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#settings" role="tab" aria-controls="settings">
+                    Settings
+                </a>
+            </li>
+        
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#origin-command" role="tab" aria-controls="origin-command">
+                    Base Command
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#user-command" role="tab" aria-controls="user-command">
+                    User Command
+                </a>
+            </li>
+         
+        </ul>
+        <div class="tab-content pt-1 h-100" id="content">
+            <div class="tab-pane active h-100" id="settings" role="tabpanel">
+                <p>
+                    <span class="text-muted">Opening File:</span><br>
+                    {{ editor.opening_file }}
+                </p>
+                
+                <p>
+                    <span class="text-muted">Opening File Name</span><br>
+                    {{ editor.file_name }}
+                </p>
+            
+                <p>
+                    <span class="text-muted">Ace Editor type:</span><br>
+                    {{ editor.file_type }}
+                </p>
+            
+                <p>
+                    <span class="text-muted">Current Dir</span><br>
+                    {{ editor.current_dir }}
+                </p>
+
+                <p>
+                    <span class="text-muted">File Extension</span><br>
+                    {{ editor.file_extension }}
+                </p>
+
+                <p>
+                    <span class="text-muted">Open Encoding</span><br>
+                    {{ editor.open_encoding }}
+                </p>
+
+                <p>
+                    <span class="text-muted">Save Encoding</span><br>
+                    {{ editor.save_encoding }}
+                </p>
+
+                <p>
+                    <span class="text-muted">Editor Python Path</span><br>
+                    {{ editor.editor_python_path }}
+                </p>
+
+                <p>
+                    <span class="text-muted">Editor Project Path</span><br>
+                    {{ editor.editor_project_path }}
+                </p>
+            </div>
+        
+            <div class="tab-pane h-100" id="origin-command" role="tabpanel">
+                {% for command in editor.command.base_command_list %}
+                    <h3 class="font-italic">{{ command.0 }}</h3>
+                    <p class="text-muted">{{ command.2 }}行目</p>
+                    <pre>{{ command.1 }}</pre>
+                <hr>
+                {% endfor %}
+            </div>
+
+            <div class="tab-pane h-100" id="user-command" role="tabpanel">
+                {% for command in editor.command.user_command_list %}
+                    <h3 class="font-italic">{{ command.0 }}</h3>
+                    <p class="text-muted">{{ command.2 }}行目</p>
+                    <pre>{{ command.1 }}</pre>
+                <hr>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- 出力表示エリア -->
+<div id="output-wrapper">
+    <div id="cmd" class="container-fluid">
+        <form action="{% url 'dteditor2:home' %}?opening_file={{ editor.opening_file }}&current_dir={{ editor.current_dir }}" method="POST" id="command-form">
+            <input type="text" id="id_cmd" name="cmd" autocomplete="off">
+            <input type="hidden" id="id_code" name="code" value="{{ editor.code }}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-info btn-sm">
+                Send Command
+            </button>
+            
+        </form>
+    </div>
+    
+    
+    <div id="output" class="bg-inverse scroll">
+        <div class="container-fluid">
+            {% for output in editor.command.output %}
+            <span class="text-white">{{ output }}</span><br>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+

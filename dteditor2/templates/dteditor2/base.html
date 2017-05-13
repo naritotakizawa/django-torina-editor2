@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+ 
+    <title>{% block title %}{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'dteditor2/bootstrap/bootstrap.min.css' %}">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'dteditor2/css/base.css' %}">
+  </head>
+  <body>
+    {% block content %}{% endblock %}
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="{% static 'dteditor2/jquery/jquery-3.1.1.min.js' %}"></script>
+    <script src="{% static 'dteditor2/tether/tether.min.js' %}" ></script>
+    <script src="{% static 'dteditor2/bootstrap/bootstrap.min.js' %}"></script>
+
+    <!-- Ace Editor settings -->
+    <script src="{% static 'dteditor2/ace/ace.js' %}"></script>
+    <script src="{% static 'dteditor2/ace/ext-language_tools.js' %}"></script>
+    <script>
+        var langTools = ace.require("ace/ext/language_tools");
+        var editor = ace.edit("code");
+        var hidden_code =  $("#id_code");
+        editor.getSession().setValue(hidden_code.val());
+        editor.getSession().on('change', function(){
+          hidden_code.val(editor.getSession().getValue());
+        });
+        editor.$blockScrolling = Infinity;
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: true,
+        });
+        editor.setTheme("ace/theme/monokai");
+        editor.getSession().setMode("ace/mode/{{ editor.file_type }}");
+        editor.setFontSize(20);
+    </script>
+
+    <script>
+        // 過去のコマンド履歴のリスト
+        var commands = [
+            {%  for cmd in editor.command.command_history %}
+            "{{ cmd }}",
+            {% endfor %}
+            "",
+        ];
+        
+        var now_index = commands.length - 1;
+
+        window.onload = function () {
+            
+            // 出力エリアを一番↓までスクロール
+            $('#output').animate({scrollTop: $('#output')[0].scrollHeight}, 0);
+            
+            // コマンド入力欄を空欄に初期化（フォームで束縛された値をけしてる）
+            $('#id_cmd').val('');
+            
+            // コマンド入力欄にカーソルを。いちいち入力欄をクリックせずにすむ
+            $('#id_cmd').focus();
+            
+            // ↑や↓キーで過去のコマンドを呼び出せる
+            $('#id_cmd').keydown(function(e){
+                switch(e.which){
+                    case 38: // Key[↑]
+                    now_index = now_index - 1;
+                    if(now_index < 0){
+                        now_index = 0;
+                    }
+                    cmd = commands[now_index];
+                    $('#id_cmd').val(cmd);
+                    break;
+         
+                    case 40: // Key[↓]
+                    now_index = now_index + 1;
+                    if(now_index >= commands.length){
+                        now_index = commands.length - 1;
+                    }
+                    cmd = commands[now_index];
+                    $('#id_cmd').val(cmd);
+                    break;
+                }
+            });
+        }
+    </script>
+  </body>
+</html>
+
