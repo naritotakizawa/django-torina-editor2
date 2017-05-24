@@ -1,9 +1,17 @@
 =====================
 django-torina-editor2
 =====================
-
+.. image:: https://travis-ci.org/naritotakizawa/django-torina-editor2.svg?branch=master
+    :target: https://travis-ci.org/naritotakizawa/django-torina-editor2
 
 Djangoで作成した、シンプルなエディター。
+
+
+Requirement
+--------------
+
+:Python: 3.6以上
+:Django: 1.11以上
 
 
 Quick start
