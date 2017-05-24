@@ -6,6 +6,13 @@ django-torina-editor2
 Djangoで作成した、シンプルなエディター。
 
 
+Requirement
+--------------
+
+:Python: 3.6以上
+:Django: 1.11以上
+
+
 Quick start
 -----------
 1. 必要なライブラリのインストール::
