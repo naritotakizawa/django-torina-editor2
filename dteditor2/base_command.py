@@ -21,11 +21,11 @@ import shutil
 import sys
 
 import cmdpr
+from dteditor2 import utils
+from dteditor2.utils import editor as edt
 
-from .utils import editor
 
-
-@editor.command.register
+@edt.command.register
 def save(editor, file_name=None):
     """プログラムの保存を行う.
 
@@ -55,20 +55,20 @@ def save(editor, file_name=None):
         cmdpr.add_line(f'ファイル名を指定するか、ファイルを開いてください')
 
 
-@editor.command.register
+@edt.command.register
 def deletelog(editor):
     """出力を一度削除する."""
     cmdpr.delete_cmd_log()
     cmdpr.add_line(f'出力をクリアーしました')
 
 
-@editor.command.register
+@edt.command.register
 def deletecmd(editor):
     """コマンド履歴の削除."""
     del editor.command.command_history[:]
 
 
-@editor.command.register
+@edt.command.register
 def cd(editor, dir_path):
     """cdコマンドを上書き。エディタのディレクトリと同期させる.
 
@@ -79,14 +79,14 @@ def cd(editor, dir_path):
     editor.update_dir(dir_path)
 
 
-@editor.command.register
+@edt.command.register
 def history(editor):
     """コマンド履歴の表示."""
     for cmd in editor.command.command_history:
         cmdpr.add_line(cmd)
 
 
-@editor.command.register
+@edt.command.register
 def rm2(editor, file_name):
     """ファイル・ディレクトリの削除.
 
@@ -105,7 +105,7 @@ def rm2(editor, file_name):
         cmdpr.add_line(f'ファイル・ディレクトリがないです {path}')
 
 
-@editor.command.register
+@edt.command.register
 def mv2(editor, before, after):
     """ファイル・ディレクトリのリネーム・移動.
 
@@ -122,7 +122,7 @@ def mv2(editor, before, after):
         cmdpr.add_line(f'mvしました {before}→{after}')
 
 
-@editor.command.register
+@edt.command.register
 def cp2(editor, before, after):
     """ファイル・ディレクトリのコピー.
 
@@ -145,7 +145,7 @@ def cp2(editor, before, after):
         cmdpr.add_line(f'cpしました {before}→{after}')
 
 
-@editor.command.register
+@edt.command.register
 def check(editor, file_name=None):
     """スタイルガイドのチェックを行う.
 
@@ -174,7 +174,7 @@ def check(editor, file_name=None):
         cmdpr.add_line(f'ファイル名を指定するか、ファイルを開いてください')
 
 
-@editor.command.register
+@edt.command.register
 def auto(editor, relative_path='.'):
     """pythonファイルチェックを行う.
 
@@ -214,7 +214,7 @@ def auto(editor, relative_path='.'):
                 cmdpr.run_cmd(cmd)
 
 
-@editor.command.register
+@edt.command.register
 def freeze(editor, path, kind='zip'):
     """圧縮を行う.
 
@@ -242,7 +242,7 @@ def freeze(editor, path, kind='zip'):
         cmdpr.add_line(f'圧縮しました {path}')
 
 
-@editor.command.register
+@edt.command.register
 def unfreeze(editor, path):
     """解凍を行う.
 
@@ -258,19 +258,46 @@ def unfreeze(editor, path):
         cmdpr.add_line(f'解凍しました {target_path}')
 
 
-@editor.command.register
+@edt.command.register
 def save_encoding(editor, encoding):
     """ファイル保存のエンコーディングを変更."""
     editor.save_encoding = encoding
 
 
-@editor.command.register
+@edt.command.register
 def open_encoding(editor, encoding):
     """ファイルオープンのエンコーディングを変更."""
     editor.open_encoding = encoding
 
 
-@editor.command.register
+@edt.command.register
 def venv(editor):
     """仮想環境の情報を表示する.(echo $VIRTUAL_ENV)."""
     cmdpr.run_cmd(f'echo $VIRTUAL_ENV')
+
+
+@edt.command.register
+def set_sort(editor, sort_type):
+    """ファイル・ディレクトリ表示方法を変更する.
+    
+    name: 名前でソート
+    size: サイズでソート
+    """
+    editor.tree.sort_type = sort_type
+
+
+@edt.command.register
+def reverse(editor):
+    """ファイル・ディレクトリ表示方法を、逆さにする"""
+    if editor.tree.reverse:
+        editor.tree.reverse = False
+    else:
+        editor.tree.reverse = True
+
+@edt.command.register
+def size2(editor, name):
+    """ファイル・ディレクトリのサイズを返す"""
+    path = os.path.join(editor.current_dir, name)
+    size = utils.get_dir_size(path)
+    human_size = utils.change_bytes(size)
+    cmdpr.add_line(f'{name}: {human_size} - {size}')

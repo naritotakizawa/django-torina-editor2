@@ -7,12 +7,64 @@ import cmdpr
 from django.conf import settings
 
 
+SUFFIXES = {
+    1000: ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+    1024: ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+}
+ 
+def get_dir_size(path):
+    """再帰的にディレクトリの名前とサイズを返す
+ 
+    基準となるディレクトリを受け取り、中のディレクトリ・ファイルを全て足したサイズを返す
+ 
+    引数:
+        path: 基準となるディレクトリのパス
+    """
+    if os.path.isfile(path):
+        return os.path.getsize(path)
+    else:
+        for root, dirs, files in os.walk(path):
+            files_path = (os.path.join(root, file) for file in files)
+            dirs_path = (os.path.join(root, dr) for dr in dirs)
+            files_size = sum(os.path.getsize(path) for path in files_path)
+            dirs_size = sum(get_dir_size(path) for path in dirs_path)
+            return files_size + dirs_size
+
+def change_bytes(size, a_kilobyte_is_1024_bytes=False):
+    ''' ファイルサイズを見やすい形に変換する
+ 
+    元コード:
+    http://diveintopython3-ja.rdy.jp/your-first-python-program.html
+ 
+    Keyword arguments:
+    size -- file size in bytes
+    a_kilobyte_is_1024_bytes -- if True (default), use multiples of 1024
+                                if False, use multiples of 1000
+ 
+    Returns: string
+ 
+ 
+ 
+    '''
+    if size < 0:
+        raise ValueError('number must be non-negative')
+ 
+    multiple = 1024 if a_kilobyte_is_1024_bytes else 1000
+    for suffix in SUFFIXES[multiple]:
+        size /= multiple
+        if size < multiple:
+            return '{0:.1f} {1}'.format(size, suffix)
+ 
+    raise ValueError('number too large')
+
 class Tree:
     """エディタのディレクトリツリー作成クラス."""
 
     def __init__(self, editor):
         """初期化."""
         self.editor = editor
+        self.sort_type = 'name'
+        self.reverse = False
         self.dirs = []
         self.files = []
 
@@ -30,10 +82,19 @@ class Tree:
 
         for name in files_and_dirs:
             full_path = os.path.join(self.editor.current_dir, name)
+            
             if os.path.isdir(full_path):
                 dirs.append((name, full_path))
             else:
-                files.append((name, full_path))
+                size = os.path.getsize(full_path)
+                files.append((name, full_path, size, change_bytes(size)))
+
+        if self.sort_type == 'size':
+            files.sort(key=lambda x: x[2], reverse=self.reverse)
+
+        elif self.sort_type == 'name':
+            files.sort(key=lambda x: x[0], reverse=self.reverse)
+            dirs.sort(key=lambda x: x[0], reverse=self.reverse)
 
         self.files = files
         self.dirs = dirs

@@ -18,10 +18,10 @@ DOSなどの元々のコマンド
 import cmdpr
 from django.utils import timezone
 
-from dteditor2.utils import editor
+from dteditor2.utils import editor as edt
 
 
-@editor.command.register
+@edt.command.register
 def now(editor):
     """現在時刻を出力エリアに表示する."""
     now = timezone.now()
