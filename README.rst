@@ -1,7 +1,8 @@
 =====================
 django-torina-editor2
 =====================
-
+.. image:: https://travis-ci.org/naritotakizawa/django-torina-editor2.svg?branch=master
+    :target: https://travis-ci.org/naritotakizawa/django-torina-editor2
 
 Djangoで作成した、シンプルなエディター。
 
