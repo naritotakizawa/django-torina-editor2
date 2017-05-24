@@ -29,6 +29,7 @@
                 <a href="{% url 'dteditor2:home' %}?opening_file={{ file.1 }}&current_dir={{ editor.current_dir }}">
                     {{ file.0 }}
                 </a>
+                <span class="float-right">{{ file.3 }}</span>
             <hr>
             {% endfor %}
         </div>
@@ -86,6 +87,20 @@
                 <p>
                     <span class="text-muted">File Extension</span><br>
                     {{ editor.file_extension }}
+                </p>
+
+                <p>
+                    <span class="text-muted">Sort Type</span><br>
+                    {{ editor.tree.sort_type }}
+                </p>
+
+                <p>
+                    <span class="text-muted">Sort Order</span><br>
+                    {% if editor.tree.reverse %}
+                        descending sequence
+                    {% else %}
+                        ascending order
+                    {% endif %}
                 </p>
 
                 <p>
