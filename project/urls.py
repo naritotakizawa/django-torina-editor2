@@ -18,5 +18,5 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^', include('dteditor2.urls', namespace='dteditor2')),
+    url(r'^', include('dteditor2.urls'))
 ]
