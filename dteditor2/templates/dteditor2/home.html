@@ -1,4 +1,5 @@
 {% extends "dteditor2/base.html" %}
+{% load tagfilter %}
 {% block title %}
   {{ editor.file_name }} - {{ editor.opening_file }}
 {% endblock %}
@@ -18,18 +19,17 @@
         <div class="container-fluid">
             <p>Directory</p>
             {% for dir in editor.tree.dirs %}
-                <a href="{% url 'dteditor2:home' %}?opening_file={{ editor.opening_file }}&current_dir={{ dir.1 }}">
-                    {{ dir.0 }}
+                <a href="{% url 'dteditor2:home' %}?opening_file={{ editor.opening_file }}&current_dir={{ dir.path }}">
+                    {{ dir.name }}
                 </a>
             <hr>
             {% endfor %}
     
             <p>File</p>
             {% for file in editor.tree.files %}
-                <a href="{% url 'dteditor2:home' %}?opening_file={{ file.1 }}&current_dir={{ editor.current_dir }}">
-                    {{ file.0 }}
+                <a data-toggle="tooltip" data-placement="right" title="{% change_bytes file.size %} - {{ file.last_update }}" href="{% url 'dteditor2:home' %}?opening_file={{ file.path }}&current_dir={{ editor.current_dir }}">
+                    {{ file.name }}
                 </a>
-                <span class="float-right">{{ file.3 }}</span>
             <hr>
             {% endfor %}
         </div>
