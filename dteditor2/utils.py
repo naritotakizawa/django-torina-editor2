@@ -87,11 +87,10 @@ class File(Path):
 
     def create_a_tag(self):
         """aタグの作成."""
-        img_extensions = ('.png', '.jpeg', '.gif', '.bmp')
         _, file_extension = os.path.splitext(self.path)
 
         # .pngなどの画像の場合は、違うビューへ飛ばすためのaタグ
-        if file_extension in img_extensions:
+        if file_extension in ('.png', '.jpeg', '.gif', '.bmp', 'jpg'):
             href = reverse('dteditor2:img', kwargs={'path': self.path})
             tag = (
                 '<a target="_blank" data-toggle="tooltip" '
@@ -99,7 +98,8 @@ class File(Path):
                 f'title="{change_bytes(self.size)} - {self.last_update}" '
                 f'href="{href}">{self.name}</a>'
             )
-        # 画像以外のファイルは、普段どおりのエディタで開く
+                    
+        # 画像、動画以外のファイルは、普段どおりのエディタで開く
         else:
             href = reverse('dteditor2:home')
             param = self.editor.request.GET.copy()

@@ -28,11 +28,9 @@ class ImgView(generic.TemplateView):
         try:
             src = open(img_path, 'rb').read()
         except FileNotFoundError:
-            raise Http404('1.png Not Found')
+            raise Http404('img Not Found')
         else:
-            extension = img_path.split('.')[-1]
             context['img_src'] = base64.b64encode(src)
             context['img_path'] = img_path
-            context['extension'] = extension
             return context
         
