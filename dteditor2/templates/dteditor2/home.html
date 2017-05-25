@@ -19,17 +19,13 @@
         <div class="container-fluid">
             <p>Directory</p>
             {% for dir in editor.tree.dirs %}
-                <a href="{% url 'dteditor2:home' %}?opening_file={{ editor.opening_file }}&current_dir={{ dir.path }}">
-                    {{ dir.name }}
-                </a>
+                {{ dir.a_tag }}
             <hr>
             {% endfor %}
     
             <p>File</p>
             {% for file in editor.tree.files %}
-                <a data-toggle="tooltip" data-placement="right" title="{% change_bytes file.size %} - {{ file.last_update }}" href="{% url 'dteditor2:home' %}?opening_file={{ file.path }}&current_dir={{ editor.current_dir }}">
-                    {{ file.name }}
-                </a>
+                {{ file.a_tag }}
             <hr>
             {% endfor %}
         </div>
