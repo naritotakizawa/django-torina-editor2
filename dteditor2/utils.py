@@ -6,7 +6,8 @@ import sys
 
 import cmdpr
 from django.conf import settings
-
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 SUFFIXES = {
     1000: ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
@@ -60,28 +61,72 @@ def change_bytes(size, a_kilobyte_is_1024_bytes=False):
     raise ValueError('number too large')
 
 
-class File:
+class Path:
+    """ファイルやディレクトリ等のPathを持つオブジェクトの基底クラス."""
+
+    def __init__(self, editor, path, name=None):
+        """基底クラス共通の初期化処理."""
+        self.path = path  # ファイル・ディレクトリのフルパス
+        self.editor = editor  # editorの参照
+        # ファイル・ディレクトリ名
+        if name is None:
+            self.name = os.path.basename(path)
+        else:
+            self.name = name
+
+
+class File(Path):
     """ファイルを表すクラス."""
 
-    def __init__(self, path, name=None):
-        self.path = path
+    def __init__(self, editor, path, name=None):
+        """ファイルの初期化処理."""
+        super().__init__(editor, path, name)
         self.size = os.path.getsize(path)
         self.last_update = datetime.fromtimestamp(os.path.getmtime(path))
-        if name is None:
-            self.name = os.path.basename(path)
+        self.a_tag = self.create_a_tag()
+
+    def create_a_tag(self):
+        """aタグの作成."""
+        img_extensions = ('.png', '.jpeg', '.gif', '.bmp')
+        _, file_extension = os.path.splitext(self.path)
+
+        # .pngなどの画像の場合は、違うビューへ飛ばすためのaタグ
+        if file_extension in img_extensions:
+            href = reverse('dteditor2:img', kwargs={'path': self.path})
+            tag = f'<a target="_blank" href="{href}">{self.name}</a>'
+
+        # 画像以外のファイルは、普段どおりのエディタで開く
         else:
-            self.name = name
+            href = reverse('dteditor2:home')
+            param = self.editor.request.GET.copy()
+            param['opening_file'] = self.path
+            param = param.urlencode()
+            tag = (
+                '<a data-toggle="tooltip" '
+                'data-placement="right" '
+                f'title="{change_bytes(self.size)} - {self.last_update}" '
+                f'href="{href}?{param}">{self.name}</a>'
+            )
+        return mark_safe(tag)
 
 
-class Directory:
+class Directory(Path):
     """ディレクトリを表すクラス."""
 
-    def __init__(self, path, name=None):
-        self.path = path
-        if name is None:
-            self.name = os.path.basename(path)
-        else:
-            self.name = name
+    def __init__(self, editor, path, name=None):
+        """ディレクトリの初期化処理."""
+        super().__init__(editor, path, name)
+        self.size = os.path.getsize(path)
+        self.a_tag = self.create_a_tag()
+
+    def create_a_tag(self):
+        """aタグの作成."""
+        href = reverse('dteditor2:home')
+        param = self.editor.request.GET.copy()
+        param['current_dir'] = self.path
+        param = param.urlencode()
+        tag = f'<a href="{href}?{param}">{self.name}</a>'
+        return mark_safe(tag)
 
 
 class Tree:
@@ -102,7 +147,7 @@ class Tree:
 
         # dirnameで前のフォルダを表せます
         before_dir = Directory(
-            os.path.dirname(self.editor.current_dir), name='..')
+            self.editor, os.path.dirname(self.editor.current_dir), name='..')
 
         # ファイル一覧とディレクトリ一覧の作成処理
         files = []
@@ -112,10 +157,10 @@ class Tree:
             full_path = os.path.join(self.editor.current_dir, name)
 
             if os.path.isdir(full_path):
-                direcory = Directory(full_path, name=name)
+                direcory = Directory(self.editor, full_path, name=name)
                 dirs.append(direcory)
             else:
-                file = File(full_path, name=name)
+                file = File(self.editor, full_path, name=name)
                 files.append(file)
 
         if self.sort_type == 'size':
