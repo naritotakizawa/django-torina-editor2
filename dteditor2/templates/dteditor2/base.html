@@ -57,6 +57,9 @@
 
         window.onload = function () {
             
+            // Bootstrap4 Tooltipsのアクティベート
+            $('[data-toggle="tooltip"]').tooltip();
+            
             // 出力エリアを一番↓までスクロール
             $('#output').animate({scrollTop: $('#output')[0].scrollHeight}, 0);
             

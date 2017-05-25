@@ -282,6 +282,7 @@ def set_sort(editor, sort_type):
     
     name: 名前でソート
     size: サイズでソート
+    update: 更新日順でソート
     """
     editor.tree.sort_type = sort_type
 
