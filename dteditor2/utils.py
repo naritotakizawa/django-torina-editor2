@@ -93,8 +93,12 @@ class File(Path):
         # .pngなどの画像の場合は、違うビューへ飛ばすためのaタグ
         if file_extension in img_extensions:
             href = reverse('dteditor2:img', kwargs={'path': self.path})
-            tag = f'<a target="_blank" href="{href}">{self.name}</a>'
-
+            tag = (
+                '<a target="_blank" data-toggle="tooltip" '
+                'data-placement="right" '
+                f'title="{change_bytes(self.size)} - {self.last_update}" '
+                f'href="{href}">{self.name}</a>'
+            )
         # 画像以外のファイルは、普段どおりのエディタで開く
         else:
             href = reverse('dteditor2:home')
