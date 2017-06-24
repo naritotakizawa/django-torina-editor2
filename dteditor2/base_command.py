@@ -279,7 +279,7 @@ def venv(editor):
 @edt.command.register
 def set_sort(editor, sort_type):
     """ファイル・ディレクトリ表示方法を変更する.
-    
+
     name: 名前でソート
     size: サイズでソート
     update: 更新日順でソート
@@ -294,6 +294,7 @@ def reverse(editor):
         editor.tree.reverse = False
     else:
         editor.tree.reverse = True
+
 
 @edt.command.register
 def size2(editor, name):

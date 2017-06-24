@@ -1,4 +1,10 @@
 *.pyc
 *.pyo
-__pycache__
+.cache
+.coverage
+.tox
+
 db.sqlite3
+manage.py
+
+__pycache__

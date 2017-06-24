@@ -4,6 +4,7 @@ from dteditor2 import utils
 
 register = template.Library()
 
+
 @register.simple_tag
 def change_bytes(size):
     """ファイルサイズを見やすい形に変換する."""

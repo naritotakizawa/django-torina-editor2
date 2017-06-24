@@ -1,11 +1,19 @@
 language: python
-
+ 
 python:
     - "3.6"
-
+ 
+env:
+  - DJANGO=django==1.11
+  - DJANGO=https://github.com/django/django/archive/master.tar.gz
+ 
 install:
-    - pip install git+https://github.com/naritotakizawa/cmdpr
-    - pip install django
-
+    - pip install https://github.com/naritotakizawa/cmdpr/archive/master.tar.gz
+    - pip install coveralls
+    - pip install $DJANGO
+ 
 script:
-    - python -Wall manage.py test
+    - coverage run --source dteditor2 manage.py test
+
+after_success:
+    - coveralls

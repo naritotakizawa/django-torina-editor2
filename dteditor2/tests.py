@@ -12,10 +12,9 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'django-torina-editor2')
 
-
     def test_img_get(self):
         """ /img/path アクセスのテスト"""
         response = self.client.get(
-            reverse('dteditor2:img', kwargs={'path':'1.png'})
+            reverse('dteditor2:img', kwargs={'path': '1.png'})
         )
         self.assertEqual(response.status_code, 404)
