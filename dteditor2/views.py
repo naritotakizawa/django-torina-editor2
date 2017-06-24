@@ -1,5 +1,4 @@
 import base64
-import os
 
 from django.http import Http404
 from django.shortcuts import render
@@ -33,4 +32,3 @@ class ImgView(generic.TemplateView):
             context['img_src'] = base64.b64encode(src)
             context['img_path'] = img_path
             return context
-        

@@ -90,7 +90,7 @@ class File(Path):
         _, file_extension = os.path.splitext(self.path)
 
         # .pngなどの画像の場合は、違うビューへ飛ばすためのaタグ
-        if file_extension in ('.png', '.jpeg', '.gif', '.bmp', 'jpg'):
+        if file_extension in ('.png', '.jpeg', '.gif', '.bmp', '.jpg'):
             href = reverse('dteditor2:img', kwargs={'path': self.path})
             tag = (
                 '<a target="_blank" data-toggle="tooltip" '
@@ -98,7 +98,7 @@ class File(Path):
                 f'title="{change_bytes(self.size)} - {self.last_update}" '
                 f'href="{href}">{self.name}</a>'
             )
-                    
+
         # 画像、動画以外のファイルは、普段どおりのエディタで開く
         else:
             href = reverse('dteditor2:home')
@@ -193,7 +193,7 @@ class Command:
         self.user_command_dict = {}
         self.user_command_list = []
         self.output = ''
-        self.first = False
+        self.first = True
 
     def register(self, func):
         """関数を登録するデコレータとして利用してね."""
@@ -249,10 +249,11 @@ class Command:
         """コマンドが入力されていれば実行し、最新の出力を取得する."""
         # 初回だけ、コマンド登録用モジュールを読み込む
         # 一度読み込めばそれでOK。registerで登録してくれる
-        if not self.first:
-            import dteditor2.base_command
-            import project.user_command
-            self.first = True
+        if self.first:
+            from importlib import import_module
+            import_module('dteditor2.base_command')
+            import_module('project.user_command')
+            self.first = False
 
         # コマンドの入力があれば実行
         cmd = self.editor.request.POST.get('cmd', '')

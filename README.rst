@@ -4,6 +4,10 @@ django-torina-editor2
 .. image:: https://travis-ci.org/naritotakizawa/django-torina-editor2.svg?branch=master
     :target: https://travis-ci.org/naritotakizawa/django-torina-editor2
 
+.. image:: https://coveralls.io/repos/github/naritotakizawa/django-torina-editor2/badge.svg?branch=master
+    :target: https://coveralls.io/github/naritotakizawa/django-torina-editor2?branch=master
+
+
 Djangoで作成した、シンプルなエディター。
 
 
@@ -18,14 +22,16 @@ Quick start
 -----------
 1. 必要なライブラリのインストール::
 
-    pip install git+https://github.com/naritotakizawa/cmdpr
+    pip install -U https://github.com/naritotakizawa/cmdpr/archive/master.tar.gz
     pip install django
 
 
 2. あると尚良いライブラリのインストール::
 
+    # 「check」コマンドで呼ばれる。flake8プラグインもお好きに入れて
     pip install flake8
-    pip install flake8_docstrings
+
+    # 「auto」コマンドで呼ばれる
     pip install pyformat
 
 3. プロジェクトのクローン::
@@ -34,5 +40,5 @@ Quick start
 
 4. うごかす::
 
-    python manage.py runserver 127.0.0.1:9999
+    python manage.py runserver
 
